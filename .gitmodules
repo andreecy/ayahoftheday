@@ -1,0 +1,3 @@
+[submodule "alquran"]
+	path = alquran
+	url = git@github.com:andreecy/alquran.git
