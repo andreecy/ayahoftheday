@@ -1,11 +1,15 @@
 package main
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 	"math/rand"
 	"os"
 )
+
+//go:embed alquran/quran/id.indonesian.json
+var embededFiles embed.FS
 
 type QuranResponse struct {
 	Code   int    `json:"code"`
@@ -45,9 +49,23 @@ func loadFile(file string) (*QuranResponse, error) {
 	return &quranResponse, nil
 }
 
+func loadEmbedFile(file string) (*QuranResponse, error) {
+	data, err := embededFiles.ReadFile(file)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read file: %w", err)
+	}
+
+	var quranResponse QuranResponse
+	err = json.Unmarshal(data, &quranResponse)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal file: %w", err)
+	}
+	return &quranResponse, nil
+
+}
+
 func main() {
-	file := "alquran/quran/id.indonesian.json"
-	quranResponse, err := loadFile(file)
+	quranResponse, err := loadEmbedFile("alquran/quran/id.indonesian.json")
 	if err != nil {
 		fmt.Println(err)
 		return
